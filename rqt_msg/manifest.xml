@@ -12,6 +12,7 @@
   <depend package="rqt_py_common"/>
   <depend package="rqt_console"/>
   <depend package="roslib"/>
+  <depend package="rosmsg"/>
   <export>
     <rqt_gui plugin="${prefix}/plugin.xml"/>
   </export>

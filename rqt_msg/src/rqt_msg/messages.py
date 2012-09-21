@@ -44,7 +44,7 @@ class Messages(Plugin):
         self._widget = MessagesWidget(context)
 
     def shutdown_plugin(self):
-        pass
+        self._widget.cleanup_browsers_on_close()
 
     def save_settings(self, plugin_settings, instance_settings):
         # instance_settings.set_value(k, v)
