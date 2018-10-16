@@ -35,6 +35,7 @@ from rqt_py_common.message_tree_model import MessageTreeModel
 
 
 class MessagesTreeModel(MessageTreeModel):
+
     def __init__(self, parent=None):
         super(MessagesTreeModel, self).__init__()
         self.setHorizontalHeaderLabels([self.tr('Tree'),

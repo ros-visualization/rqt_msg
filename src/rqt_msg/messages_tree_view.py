@@ -36,6 +36,7 @@ from .messages_tree_model import MessagesTreeModel
 
 
 class MessagesTreeView(MessageTreeWidget):
+
     def __init__(self, parent=None):
         super(MessagesTreeView, self).__init__()
         self.setModel(MessagesTreeModel(self))

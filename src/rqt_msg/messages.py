@@ -35,6 +35,7 @@ from .messages_widget import MessagesWidget
 
 
 class Messages(Plugin):
+
     def __init__(self, context):
         super(Messages, self).__init__(context)
         self.setObjectName('Messages')
