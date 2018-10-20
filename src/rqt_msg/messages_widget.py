@@ -49,11 +49,13 @@ from rqt_console.text_browse_dialog import TextBrowseDialog
 
 
 class MessagesWidget(QWidget):
+
     """
     This class is intended to be able to handle msg, srv & action (actionlib).
     The name of the class is kept to use message, by following the habit of
     rosmsg (a script that can handle both msg & srv).
     """
+
     def __init__(self, mode=rosmsg.MODE_MSG,
                  pkg_name='rqt_msg',
                  ui_filename='messages.ui'):
@@ -89,7 +91,7 @@ class MessagesWidget(QWidget):
         elif self._mode == rosaction.MODE_ACTION:
             packages = sorted([pkg_tuple[0]
                                for pkg_tuple in rosaction.iterate_packages(
-                                                         self._rospack, self._mode)])
+                self._rospack, self._mode)])
         self._package_list = packages
         rospy.logdebug('pkgs={}'.format(self._package_list))
         self._package_combo.clear()
@@ -101,16 +103,16 @@ class MessagesWidget(QWidget):
             return
         self._msgs = []
         if (self._mode == rosmsg.MODE_MSG or
-            self._mode == rosaction.MODE_ACTION):
+                self._mode == rosaction.MODE_ACTION):
             msg_list = rosmsg.list_msgs(package)
         elif self._mode == rosmsg.MODE_SRV:
             msg_list = rosmsg.list_srvs(package)
 
-        rospy.logdebug('_refresh_msgs package={} msg_list={}'.format(package,
-                                                                    msg_list))
+        rospy.logdebug(
+            '_refresh_msgs package={} msg_list={}'.format(package, msg_list))
         for msg in msg_list:
             if (self._mode == rosmsg.MODE_MSG or
-                self._mode == rosaction.MODE_ACTION):
+                    self._mode == rosaction.MODE_ACTION):
                 msg_class = roslib.message.get_message_class(msg)
             elif self._mode == rosmsg.MODE_SRV:
                 msg_class = roslib.message.get_service_class(msg)
@@ -134,30 +136,30 @@ class MessagesWidget(QWidget):
         rospy.logdebug('_add_message msg={}'.format(msg))
 
         if (self._mode == rosmsg.MODE_MSG or
-            self._mode == rosaction.MODE_ACTION):
+                self._mode == rosaction.MODE_ACTION):
             msg_class = roslib.message.get_message_class(msg)()
             if self._mode == rosmsg.MODE_MSG:
                 text_tree_root = 'Msg Root'
             elif self._mode == rosaction.MODE_ACTION:
                 text_tree_root = 'Action Root'
             self._messages_tree.model().add_message(msg_class,
-                                            self.tr(text_tree_root), msg, msg)
+                                                    self.tr(text_tree_root), msg, msg)
 
         elif self._mode == rosmsg.MODE_SRV:
             msg_class = roslib.message.get_service_class(msg)()
             self._messages_tree.model().add_message(msg_class._request_class,
-                                                self.tr('Service Request'),
-                                                msg, msg)
+                                                    self.tr('Service Request'),
+                                                    msg, msg)
             self._messages_tree.model().add_message(msg_class._response_class,
-                                                self.tr('Service Response'),
-                                                msg, msg)
+                                                    self.tr('Service Response'),
+                                                    msg, msg)
         self._messages_tree._recursive_set_editable(
-                        self._messages_tree.model().invisibleRootItem(), False)
+            self._messages_tree.model().invisibleRootItem(), False)
 
     def _handle_mouse_press(self, event,
                             old_pressEvent=QTreeView.mousePressEvent):
         if (event.buttons() & Qt.RightButton and
-            event.modifiers() == Qt.NoModifier):
+                event.modifiers() == Qt.NoModifier):
             self._rightclick_menu(event)
             event.accept()
         return old_pressEvent(self._messages_tree, event)
@@ -194,7 +196,7 @@ class MessagesWidget(QWidget):
             browsetext = None
             try:
                 if (self._mode == rosmsg.MODE_MSG or
-                    self._mode == rosaction.MODE_ACTION):
+                        self._mode == rosaction.MODE_ACTION):
                     browsetext = rosmsg.get_msg_text(selected_type,
                                                      action == raw_action)
                 elif self._mode == rosmsg.MODE_SRV:
