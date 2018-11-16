@@ -4,6 +4,7 @@ project(rqt_msg)
 # Load ament and all dependencies required for this package
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
+find_package(rqt_console REQUIRED)
 
 ament_python_install_package(${PROJECT_NAME}
     PACKAGE_DIR src/${PROJECT_NAME})

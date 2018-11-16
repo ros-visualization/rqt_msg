@@ -32,7 +32,7 @@
 
 import os
 
-from ament_index_python.resources import get_resource
+from ament_index_python.resources import get_resource, get_resources
 
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt
@@ -49,7 +49,8 @@ from rqt_msg.messages_tree_view import MessagesTreeView
 # from rqt_py_common import rosaction
 
 from rqt_py_common import message_helpers
-from rqt_py_common.rqt_roscomm_util import iterate_packages
+from rqt_py_common.rqt_roscomm_util import RqtRoscommUtil
+from rqt_py_common.topic_helpers import is_primative_type
 from rqt_py_common.message_helpers import get_message_class, get_service_class
 from rqt_py_common.message_helpers import get_message_text_from_class, get_service_text_from_class
 
@@ -94,12 +95,8 @@ class MessagesWidget(QWidget):
         self._browsers = []
 
     def _refresh_packages(self, mode=message_helpers.MSG_MODE):
-        if self._mode == message_helpers.MSG_MODE or self._mode == message_helpers.SRV_MODE:
-            packages = sorted(
-                [pkg_tuple[0] for pkg_tuple in iterate_packages(self._mode)])
-        elif self._mode == message_helpers.ACTION_MODE:
-            packages = sorted(
-                [pkg_tuple[0] for pkg_tuple in iterate_packages(self._mode)])
+        packages = sorted(
+            [pkg_tuple[0] for pkg_tuple in RqtRoscommUtil.iterate_packages(self._mode)])
         self._package_list = packages
         self._logger.debug('pkgs={}'.format(self._package_list))
         self._package_combo.clear()
@@ -111,10 +108,13 @@ class MessagesWidget(QWidget):
             return
         self._msgs = []
         if self._mode == message_helpers.MSG_MODE or self._mode == message_helpers.ACTION_MODE:
-            msg_list = message_helpers.get_message_types(package)
-
+            msg_list = [
+                ''.join([package, '/', msg])
+                for msg in message_helpers.get_message_types(package)]
         elif self._mode == message_helpers.SRV_MODE:
-            msg_list = message_helpers.get_service_types(package)
+            msg_list = [
+                ''.join([package, '/', srv])
+                for srv in message_helpers.get_service_types(package)]
 
         self._logger.debug(
             '_refresh_msgs package={} msg_list={}'.format(package, msg_list))
@@ -154,11 +154,11 @@ class MessagesWidget(QWidget):
                                                     self.tr(text_tree_root), msg, msg)
 
         elif self._mode == message_helpers.SRV_MODE:
-            msg_class = get_service_class(msg)()
-            self._messages_tree.model().add_message(msg_class._request_class,
+            msg_class = get_service_class(msg)
+            self._messages_tree.model().add_message(msg_class.Request,
                                                     self.tr('Service Request'),
                                                     msg, msg)
-            self._messages_tree.model().add_message(msg_class._response_class,
+            self._messages_tree.model().add_message(msg_class.Response,
                                                     self.tr('Service Response'),
                                                     msg, msg)
         self._messages_tree._recursive_set_editable(
@@ -187,14 +187,12 @@ class MessagesWidget(QWidget):
         menu = QMenu()
         text_action = QAction(self.tr('View Text'), menu)
         menu.addAction(text_action)
-        raw_action = QAction(self.tr('View Raw'), menu)
-        menu.addAction(raw_action)
         remove_action = QAction(self.tr('Remove message'), menu)
         menu.addAction(remove_action)
 
         action = menu.exec_(event.globalPos())
 
-        if action == raw_action or action == text_action:
+        if action == text_action:
             self._logger.debug('_rightclick_menu selected={}'.format(selected))
             selected_type = selected[1].data()
 
@@ -206,15 +204,22 @@ class MessagesWidget(QWidget):
             browsetext = None
 
             if (self._mode == message_helpers.MSG_MODE):
-                msg_class = get_message_class(selected_type)
-                browsetext = get_message_text_from_class(msg_class)
+                if is_primative_type(selected_type):
+                    browsetext = selected_type
+                else:
+                    msg_class = get_message_class(selected_type)
+                    browsetext = get_message_text_from_class(msg_class)
 
             elif self._mode == message_helpers.SRV_MODE:
-                srv_class = get_service_class(selected_type)
-                browsetext = get_service_text_from_class(srv_class)
+
+                if is_primative_type(selected_type):
+                    browsetext = selected_type
+                else:
+                    msg_class = get_service_class(selected_type)
+                    browsetext = get_service_text_from_class(msg_class)
 
             elif self._mode == message_helpers.ACTION_MODE:
-                self._logger.warning('browsetext not available for actions yet')
+                self._logger.warn('browsetext not available for actions yet')
 
             if browsetext is not None:
                 self._browsers.append(TextBrowseDialog(browsetext))
