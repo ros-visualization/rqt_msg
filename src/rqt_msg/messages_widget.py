@@ -50,7 +50,8 @@ from rqt_msg.messages_tree_view import MessagesTreeView
 
 from rqt_py_common import message_helpers
 from rqt_py_common.rqt_roscomm_util import iterate_packages
-from rqt_py_common.topic_helpers import get_message_class, get_service_class
+from rqt_py_common.message_helpers import get_message_class, get_service_class
+from rqt_py_common.message_helpers import get_message_text_from_class, get_service_text_from_class
 
 
 class MessagesWidget(QWidget):
@@ -204,22 +205,16 @@ class MessagesWidget(QWidget):
             #   implement get_msg_text like functionality like what is available in ROS1
             browsetext = None
 
-            # self._logger.error("TODO: mlautman implement get_msg_text like function")
-            # try:
-            #     if (self._mode == message_helpers.MSG_MODE or
-            #             self._mode == message_helpers.ACTION_MODE):
-            #         browsetext = rosmsg.get_msg_text(selected_type,
-            #                                          action == raw_action)
-            #     elif self._mode == message_helpers.SRV_MODE:
-            #         browsetext = rosmsg.get_srv_text(selected_type,
-            #                                          action == raw_action)
+            if (self._mode == message_helpers.MSG_MODE):
+                msg_class = get_message_class(selected_type)
+                browsetext = get_message_text_from_class(msg_class)
 
-            #     else:
-            #         raise
-            # except rosmsg.ROSMsgException:
-            #     QMessageBox.warning(self, self.tr('Warning'),
-            #                         self.tr('The selected item component ' +
-            #                                 'does not have text to view.'))
+            elif self._mode == message_helpers.SRV_MODE:
+                srv_class = get_service_class(selected_type)
+                browsetext = get_service_text_from_class(srv_class)
+
+            elif self._mode == message_helpers.ACTION_MODE:
+                self._logger.warning('browsetext not available for actions yet')
 
             if browsetext is not None:
                 self._browsers.append(TextBrowseDialog(browsetext))
