@@ -32,31 +32,37 @@
 
 import os
 
+from ament_index_python.resources import get_resource, get_resources
+
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt
 from python_qt_binding.QtGui import QIcon
-from python_qt_binding.QtWidgets import (QAction, QMenu, QMessageBox,
+from python_qt_binding.QtWidgets import (QAction, QMenu,
                                          QTreeView, QWidget)
-import roslib
-import rosmsg
-import rospkg
-import rospy
 
+from rclpy import logging
 
-from .messages_tree_view import MessagesTreeView
-from rqt_py_common import rosaction
 from rqt_console.text_browse_dialog import TextBrowseDialog
+
+from rqt_msg.messages_tree_view import MessagesTreeView
+
+# from rqt_py_common import rosaction
+
+from rqt_py_common import message_helpers
+from rqt_py_common.rqt_roscomm_util import RqtRoscommUtil
+from rqt_py_common.topic_helpers import is_primitive_type
+from rqt_py_common.message_helpers import get_message_class, get_service_class
+from rqt_py_common.message_helpers import get_message_text_from_class, get_service_text_from_class
 
 
 class MessagesWidget(QWidget):
-
     """
     This class is intended to be able to handle msg, srv & action (actionlib).
     The name of the class is kept to use message, by following the habit of
     rosmsg (a script that can handle both msg & srv).
     """
 
-    def __init__(self, mode=rosmsg.MODE_MSG,
+    def __init__(self, mode=message_helpers.MSG_MODE,
                  pkg_name='rqt_msg',
                  ui_filename='messages.ui'):
         """
@@ -67,10 +73,14 @@ class MessagesWidget(QWidget):
                             is to implement all Qt components in
                             rqt_msg/resource/message.ui file.
         """
-
         super(MessagesWidget, self).__init__()
-        self._rospack = rospkg.RosPack()
-        ui_file = os.path.join(self._rospack.get_path(pkg_name), 'resource', ui_filename)
+
+        self._logger = logging.get_logger("MessagesWidget")
+
+        _, package_path = get_resource('packages', pkg_name)
+        ui_file = os.path.join(
+            package_path, 'share', pkg_name, 'resource', ui_filename)
+
         loadUi(ui_file, self, {'MessagesTreeView': MessagesTreeView})
         self.setObjectName(ui_filename)
         self._mode = mode
@@ -84,16 +94,11 @@ class MessagesWidget(QWidget):
 
         self._browsers = []
 
-    def _refresh_packages(self, mode=rosmsg.MODE_MSG):
-        if (self._mode == rosmsg.MODE_MSG) or self._mode == rosmsg.MODE_SRV:
-            packages = sorted([pkg_tuple[0] for pkg_tuple in
-                               rosmsg.iterate_packages(self._rospack, self._mode)])
-        elif self._mode == rosaction.MODE_ACTION:
-            packages = sorted([pkg_tuple[0]
-                               for pkg_tuple in rosaction.iterate_packages(
-                self._rospack, self._mode)])
+    def _refresh_packages(self, mode=message_helpers.MSG_MODE):
+        packages = sorted(
+            [pkg_tuple[0] for pkg_tuple in RqtRoscommUtil.iterate_packages(self._mode)])
         self._package_list = packages
-        rospy.logdebug('pkgs={}'.format(self._package_list))
+        self._logger.debug('pkgs={}'.format(self._package_list))
         self._package_combo.clear()
         self._package_combo.addItems(self._package_list)
         self._package_combo.setCurrentIndex(0)
@@ -102,22 +107,25 @@ class MessagesWidget(QWidget):
         if package is None or len(package) == 0:
             return
         self._msgs = []
-        if (self._mode == rosmsg.MODE_MSG or
-                self._mode == rosaction.MODE_ACTION):
-            msg_list = rosmsg.list_msgs(package)
-        elif self._mode == rosmsg.MODE_SRV:
-            msg_list = rosmsg.list_srvs(package)
+        if self._mode == message_helpers.MSG_MODE or self._mode == message_helpers.ACTION_MODE:
+            msg_list = [
+                ''.join([package, '/', msg])
+                for msg in message_helpers.get_message_types(package)]
+        elif self._mode == message_helpers.SRV_MODE:
+            msg_list = [
+                ''.join([package, '/', srv])
+                for srv in message_helpers.get_service_types(package)]
 
-        rospy.logdebug(
+        self._logger.debug(
             '_refresh_msgs package={} msg_list={}'.format(package, msg_list))
         for msg in msg_list:
-            if (self._mode == rosmsg.MODE_MSG or
-                    self._mode == rosaction.MODE_ACTION):
-                msg_class = roslib.message.get_message_class(msg)
-            elif self._mode == rosmsg.MODE_SRV:
-                msg_class = roslib.message.get_service_class(msg)
+            if (self._mode == message_helpers.MSG_MODE or
+                    self._mode == message_helpers.ACTION_MODE):
+                msg_class = get_message_class(msg)
+            elif self._mode == message_helpers.SRV_MODE:
+                msg_class = get_service_class(msg)
 
-            rospy.logdebug('_refresh_msgs msg_class={}'.format(msg_class))
+            self._logger.debug('_refresh_msgs msg_class={}'.format(msg_class))
 
             if msg_class is not None:
                 self._msgs.append(msg)
@@ -133,24 +141,24 @@ class MessagesWidget(QWidget):
         msg = (self._package_combo.currentText() +
                '/' + self._msgs_combo.currentText())
 
-        rospy.logdebug('_add_message msg={}'.format(msg))
+        self._logger.debug('_add_message msg={}'.format(msg))
 
-        if (self._mode == rosmsg.MODE_MSG or
-                self._mode == rosaction.MODE_ACTION):
-            msg_class = roslib.message.get_message_class(msg)()
-            if self._mode == rosmsg.MODE_MSG:
+        if (self._mode == message_helpers.MSG_MODE or
+                self._mode == message_helpers.ACTION_MODE):
+            msg_class = get_message_class(msg)()
+            if self._mode == message_helpers.MSG_MODE:
                 text_tree_root = 'Msg Root'
-            elif self._mode == rosaction.MODE_ACTION:
+            elif self._mode == message_helpers.ACTION_MODE:
                 text_tree_root = 'Action Root'
             self._messages_tree.model().add_message(msg_class,
                                                     self.tr(text_tree_root), msg, msg)
 
-        elif self._mode == rosmsg.MODE_SRV:
-            msg_class = roslib.message.get_service_class(msg)()
-            self._messages_tree.model().add_message(msg_class._request_class,
+        elif self._mode == message_helpers.SRV_MODE:
+            msg_class = get_service_class(msg)
+            self._messages_tree.model().add_message(msg_class.Request,
                                                     self.tr('Service Request'),
                                                     msg, msg)
-            self._messages_tree.model().add_message(msg_class._response_class,
+            self._messages_tree.model().add_message(msg_class.Response,
                                                     self.tr('Service Response'),
                                                     msg, msg)
         self._messages_tree._recursive_set_editable(
@@ -168,7 +176,6 @@ class MessagesWidget(QWidget):
         """
         :type event: QEvent
         """
-
         # QTreeview.selectedIndexes() returns 0 when no node is selected.
         # This can happen when after booting no left-click has been made yet
         # (ie. looks like right-click doesn't count). These lines are the
@@ -180,38 +187,42 @@ class MessagesWidget(QWidget):
         menu = QMenu()
         text_action = QAction(self.tr('View Text'), menu)
         menu.addAction(text_action)
-        raw_action = QAction(self.tr('View Raw'), menu)
-        menu.addAction(raw_action)
         remove_action = QAction(self.tr('Remove message'), menu)
         menu.addAction(remove_action)
 
         action = menu.exec_(event.globalPos())
 
-        if action == raw_action or action == text_action:
-            rospy.logdebug('_rightclick_menu selected={}'.format(selected))
+        if action == text_action:
+            self._logger.debug('_rightclick_menu selected={}'.format(selected))
             selected_type = selected[1].data()
 
-            if selected_type[-2:] == '[]':
-                selected_type = selected_type[:-2]
-            browsetext = None
-            try:
-                if (self._mode == rosmsg.MODE_MSG or
-                        self._mode == rosaction.MODE_ACTION):
-                    browsetext = rosmsg.get_msg_text(selected_type,
-                                                     action == raw_action)
-                elif self._mode == rosmsg.MODE_SRV:
-                    browsetext = rosmsg.get_srv_text(selected_type,
-                                                     action == raw_action)
+            if selected_type.find('[') >= 0:
+                selected_type = selected_type[:selected_type.find('[')]
 
+            # TODO(mlautman):
+            #   implement get_msg_text like functionality like what is available in ROS1
+            browsetext = None
+
+            if (self._mode == message_helpers.MSG_MODE):
+                if is_primitive_type(selected_type):
+                    browsetext = selected_type
                 else:
-                    raise
-            except rosmsg.ROSMsgException as e:
-                QMessageBox.warning(self, self.tr('Warning'),
-                                    self.tr('The selected item component ' +
-                                            'does not have text to view.'))
+                    msg_class = get_message_class(selected_type)
+                    browsetext = get_message_text_from_class(msg_class)
+
+            elif self._mode == message_helpers.SRV_MODE:
+
+                if is_primitive_type(selected_type):
+                    browsetext = selected_type
+                else:
+                    msg_class = get_service_class(selected_type)
+                    browsetext = get_service_text_from_class(msg_class)
+
+            elif self._mode == message_helpers.ACTION_MODE:
+                self._logger.warn('browsetext not available for actions yet')
+
             if browsetext is not None:
-                self._browsers.append(TextBrowseDialog(browsetext,
-                                                       self._rospack))
+                self._browsers.append(TextBrowseDialog(browsetext))
                 self._browsers[-1].show()
 
         if action == remove_action:
