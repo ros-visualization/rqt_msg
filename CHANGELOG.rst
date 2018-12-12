@@ -2,6 +2,12 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* ros2 port (`#2 <https://github.com/ros-visualization/rqt_msg/issues/2>`_)
+* autopep8 (`#1 <https://github.com/ros-visualization/rqt_msg/issues/1>`_)
+* Contributors: Mike Lautman
+
 0.4.8 (2017-04-24)
 ------------------
 
