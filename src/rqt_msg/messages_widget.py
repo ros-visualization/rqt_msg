@@ -165,20 +165,13 @@ class MessagesWidget(QWidget):
         elif self._mode == message_helpers.ACTION_MODE:
             action_class = get_action_class(msg)
             text_tree_root = 'Action Root'
-            self._messages_tree.model().add_message(action_class.Goal.Request,
-                                                    self.tr('Action Goal Request'),
-                                                    msg + '/Goal/Request', msg + '/Goal/Request')
-            self._messages_tree.model().add_message(action_class.Goal.Response,
-                                                    self.tr('Action Goal Response'),
-                                                    msg + '/Goal/Response', msg + '/Goal/Response')
-            self._messages_tree.model().add_message(action_class.Result.Request,
-                                                    self.tr('Action Result Request'),
-                                                    msg + '/Result/Request',
-                                                    msg + '/Result/Request')
-            self._messages_tree.model().add_message(action_class.Result.Response,
-                                                    self.tr('Action Result Response'),
-                                                    msg + '/Result/Response',
-                                                    msg + '/Result/Response')
+            self._messages_tree.model().add_message(action_class.Goal,
+                                                    self.tr('Action Goal'),
+                                                    msg + '/Goal')
+            self._messages_tree.model().add_message(action_class.Result,
+                                                    self.tr('Action Result'),
+                                                    msg + '/Result',
+                                                    msg + '/Result')
             self._messages_tree.model().add_message(action_class.Feedback,
                                                     self.tr('Action Feedback'),
                                                     msg + '/Feedback', msg + '/Feedback')
