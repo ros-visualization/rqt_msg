@@ -50,7 +50,6 @@ from rqt_msg.messages_tree_view import MessagesTreeView
 
 from rqt_py_common import message_helpers
 from rqt_py_common.rqt_roscomm_util import RqtRoscommUtil
-from rqt_py_common.topic_helpers import is_primitive_type
 from rqt_py_common.message_helpers import get_action_class, get_message_class, get_service_class
 from rqt_py_common.message_helpers import \
     get_action_text_from_class, get_message_text_from_class, get_service_text_from_class
@@ -156,25 +155,29 @@ class MessagesWidget(QWidget):
                                                     self.tr(text_tree_root), msg, msg)
         elif self._mode == message_helpers.SRV_MODE:
             msg_class = get_service_class(msg)
-            self._messages_tree.model().add_message(msg_class.Request,
+            self._messages_tree.model().add_message(msg_class.Request(),
                                                     self.tr('Service Request'),
-                                                    msg, msg)
-            self._messages_tree.model().add_message(msg_class.Response,
+                                                    msg + '/Request',
+                                                    msg + '/Request')
+            self._messages_tree.model().add_message(msg_class.Response(),
                                                     self.tr('Service Response'),
-                                                    msg, msg)
+                                                    msg + '/Response',
+                                                    msg + '/Response')
         elif self._mode == message_helpers.ACTION_MODE:
             action_class = get_action_class(msg)
             text_tree_root = 'Action Root'
-            self._messages_tree.model().add_message(action_class.Goal,
+            self._messages_tree.model().add_message(action_class.Goal(),
                                                     self.tr('Action Goal'),
+                                                    msg + '/Goal',
                                                     msg + '/Goal')
-            self._messages_tree.model().add_message(action_class.Result,
+            self._messages_tree.model().add_message(action_class.Result(),
                                                     self.tr('Action Result'),
                                                     msg + '/Result',
                                                     msg + '/Result')
-            self._messages_tree.model().add_message(action_class.Feedback,
+            self._messages_tree.model().add_message(action_class.Feedback(),
                                                     self.tr('Action Feedback'),
-                                                    msg + '/Feedback', msg + '/Feedback')
+                                                    msg + '/Feedback',
+                                                    msg + '/Feedback')
 
         self._messages_tree._recursive_set_editable(
             self._messages_tree.model().invisibleRootItem(), False)
@@ -211,33 +214,45 @@ class MessagesWidget(QWidget):
             self._logger.debug('_rightclick_menu selected={}'.format(selected))
             selected_type = selected[1].data()
 
-            if selected_type.find('[') >= 0:
-                selected_type = selected_type[:selected_type.find('[')]
+            # We strip any array information for loading the python classes
+            selected_type_bare = selected_type
+            if selected_type_bare.find('[') >= 0:
+                selected_type_bare = selected_type_bare[:selected_type_bare.find('[')]
+            # We use the number of '/' to determine of the selected type is a msg, action, srv,
+            # or primitive type.
+            # NOTE (mlautman - 2/4/19) this heuristic seems brittle and should be removed
+            selected_type_bare_tokens_len = len(selected_type_bare.split('/'))
 
-            # TODO(mlautman):
-            #   implement get_msg_text like functionality like what is available in ROS1
+            # We only want the base class so we transform eg. pkg1/my_srv/Request -> pkg1/my_srv
+            if selected_type_bare_tokens_len > 2:
+                selected_type_bare = "/".join(selected_type_bare.split('/')[:2])
+
             browsetext = None
 
-            if (self._mode == message_helpers.MSG_MODE):
-                if is_primitive_type(selected_type):
-                    browsetext = selected_type
-                else:
-                    msg_class = get_message_class(selected_type)
-                    browsetext = get_message_text_from_class(msg_class)
+            # If the type does not have '/'s then we treat it as a primitive type
+            if selected_type_bare_tokens_len == 1:
+                browsetext = selected_type
 
-            elif self._mode == message_helpers.SRV_MODE:
-                if is_primitive_type(selected_type):
-                    browsetext = selected_type
-                else:
-                    msg_class = get_service_class(selected_type)
-                    browsetext = get_service_text_from_class(msg_class)
+            # if the type has a single '/' then we treat it as a msg type
+            elif selected_type_bare_tokens_len == 2:
+                msg_class = get_message_class(selected_type_bare)
+                browsetext = get_message_text_from_class(msg_class)
 
-            elif self._mode == message_helpers.ACTION_MODE:
-                if is_primitive_type(selected_type):
-                    browsetext = selected_type
-                else:
-                    msg_class = get_action_class(selected_type)
+            # If the type has two '/'s then we treat it as a srv or action type
+            elif selected_type_bare_tokens_len == 3:
+                if self._mode == message_helpers.SRV_MODE:
+                        msg_class = get_service_class(selected_type_bare)
+                        browsetext = get_service_text_from_class(msg_class)
+
+                elif self._mode == message_helpers.ACTION_MODE:
+                    msg_class = get_action_class(selected_type_bare)
                     browsetext = get_action_text_from_class(msg_class)
+
+                else:
+                    self._logger.warn("Unrecognized value for self._mode: {} "
+                                      "for selected_type: {}".format(self._mode, selected_type))
+            else:
+                self._logger.warn("Invalid selected_type: {}".format(selected_type))
 
             if browsetext is not None:
                 self._browsers.append(TextBrowseDialog(browsetext))
