@@ -51,8 +51,9 @@ from rqt_msg.messages_tree_view import MessagesTreeView
 from rqt_py_common import message_helpers
 from rqt_py_common.rqt_roscomm_util import RqtRoscommUtil
 from rqt_py_common.topic_helpers import is_primitive_type
-from rqt_py_common.message_helpers import get_message_class, get_service_class
-from rqt_py_common.message_helpers import get_message_text_from_class, get_service_text_from_class
+from rqt_py_common.message_helpers import get_action_class, get_message_class, get_service_class
+from rqt_py_common.message_helpers import \
+    get_action_text_from_class, get_message_text_from_class, get_service_text_from_class
 
 
 class MessagesWidget(QWidget):
@@ -107,7 +108,7 @@ class MessagesWidget(QWidget):
         if package is None or len(package) == 0:
             return
         self._msgs = []
-        if self._mode == message_helpers.MSG_MODE or self._mode == message_helpers.ACTION_MODE:
+        if self._mode == message_helpers.MSG_MODE:
             msg_list = [
                 ''.join([package, '/', msg])
                 for msg in message_helpers.get_message_types(package)]
@@ -115,15 +116,20 @@ class MessagesWidget(QWidget):
             msg_list = [
                 ''.join([package, '/', srv])
                 for srv in message_helpers.get_service_types(package)]
+        elif self._mode == message_helpers.ACTION_MODE:
+            msg_list = [
+                ''.join([package, '/', action])
+                for action in message_helpers.get_action_types(package)]
 
         self._logger.debug(
             '_refresh_msgs package={} msg_list={}'.format(package, msg_list))
         for msg in msg_list:
-            if (self._mode == message_helpers.MSG_MODE or
-                    self._mode == message_helpers.ACTION_MODE):
+            if (self._mode == message_helpers.MSG_MODE):
                 msg_class = get_message_class(msg)
             elif self._mode == message_helpers.SRV_MODE:
                 msg_class = get_service_class(msg)
+            elif self._mode == message_helpers.ACTION_MODE:
+                msg_class = get_action_class(msg)
 
             self._logger.debug('_refresh_msgs msg_class={}'.format(msg_class))
 
@@ -143,16 +149,11 @@ class MessagesWidget(QWidget):
 
         self._logger.debug('_add_message msg={}'.format(msg))
 
-        if (self._mode == message_helpers.MSG_MODE or
-                self._mode == message_helpers.ACTION_MODE):
+        if self._mode == message_helpers.MSG_MODE:
             msg_class = get_message_class(msg)()
-            if self._mode == message_helpers.MSG_MODE:
-                text_tree_root = 'Msg Root'
-            elif self._mode == message_helpers.ACTION_MODE:
-                text_tree_root = 'Action Root'
+            text_tree_root = 'Msg Root'
             self._messages_tree.model().add_message(msg_class,
                                                     self.tr(text_tree_root), msg, msg)
-
         elif self._mode == message_helpers.SRV_MODE:
             msg_class = get_service_class(msg)
             self._messages_tree.model().add_message(msg_class.Request,
@@ -161,6 +162,20 @@ class MessagesWidget(QWidget):
             self._messages_tree.model().add_message(msg_class.Response,
                                                     self.tr('Service Response'),
                                                     msg, msg)
+        elif self._mode == message_helpers.ACTION_MODE:
+            action_class = get_action_class(msg)
+            text_tree_root = 'Action Root'
+            self._messages_tree.model().add_message(action_class.Goal,
+                                                    self.tr('Action Goal'),
+                                                    msg + '/Goal')
+            self._messages_tree.model().add_message(action_class.Result,
+                                                    self.tr('Action Result'),
+                                                    msg + '/Result',
+                                                    msg + '/Result')
+            self._messages_tree.model().add_message(action_class.Feedback,
+                                                    self.tr('Action Feedback'),
+                                                    msg + '/Feedback', msg + '/Feedback')
+
         self._messages_tree._recursive_set_editable(
             self._messages_tree.model().invisibleRootItem(), False)
 
@@ -211,7 +226,6 @@ class MessagesWidget(QWidget):
                     browsetext = get_message_text_from_class(msg_class)
 
             elif self._mode == message_helpers.SRV_MODE:
-
                 if is_primitive_type(selected_type):
                     browsetext = selected_type
                 else:
@@ -219,7 +233,11 @@ class MessagesWidget(QWidget):
                     browsetext = get_service_text_from_class(msg_class)
 
             elif self._mode == message_helpers.ACTION_MODE:
-                self._logger.warn('browsetext not available for actions yet')
+                if is_primitive_type(selected_type):
+                    browsetext = selected_type
+                else:
+                    msg_class = get_action_class(selected_type)
+                    browsetext = get_action_text_from_class(msg_class)
 
             if browsetext is not None:
                 self._browsers.append(TextBrowseDialog(browsetext))
