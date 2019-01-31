@@ -158,15 +158,18 @@ class MessagesWidget(QWidget):
             msg_class = get_service_class(msg)
             self._messages_tree.model().add_message(msg_class.Request,
                                                     self.tr('Service Request'),
-                                                    msg, msg)
+                                                    msg + '/Request',
+                                                    msg + '/Request')
             self._messages_tree.model().add_message(msg_class.Response,
                                                     self.tr('Service Response'),
-                                                    msg, msg)
+                                                    msg + '/Response',
+                                                    msg + '/Response')
         elif self._mode == message_helpers.ACTION_MODE:
             action_class = get_action_class(msg)
             text_tree_root = 'Action Root'
             self._messages_tree.model().add_message(action_class.Goal,
                                                     self.tr('Action Goal'),
+                                                    msg + '/Goal',
                                                     msg + '/Goal')
             self._messages_tree.model().add_message(action_class.Result,
                                                     self.tr('Action Result'),
@@ -174,7 +177,8 @@ class MessagesWidget(QWidget):
                                                     msg + '/Result')
             self._messages_tree.model().add_message(action_class.Feedback,
                                                     self.tr('Action Feedback'),
-                                                    msg + '/Feedback', msg + '/Feedback')
+                                                    msg + '/Feedback',
+                                                    msg + '/Feedback')
 
         self._messages_tree._recursive_set_editable(
             self._messages_tree.model().invisibleRootItem(), False)
@@ -211,33 +215,47 @@ class MessagesWidget(QWidget):
             self._logger.debug('_rightclick_menu selected={}'.format(selected))
             selected_type = selected[1].data()
 
-            if selected_type.find('[') >= 0:
-                selected_type = selected_type[:selected_type.find('[')]
+            # We strip any array information for loading the python classes for messages, services and actions
+            selected_type_bare = selected_type
+            if selected_type_bare.find('[') >= 0:
+                selected_type_bare = selected_type_bare[:selected_type_bare.find('[')]
 
-            # TODO(mlautman):
-            #   implement get_msg_text like functionality like what is available in ROS1
+            # We use the number of '/' to determine of the selected type is a msg, action, service, or primitive type
+            selected_type_bare_tokens_len = len(selected_type_bare.split('/'))
+
             browsetext = None
 
             if (self._mode == message_helpers.MSG_MODE):
-                if is_primitive_type(selected_type):
-                    browsetext = selected_type
-                else:
-                    msg_class = get_message_class(selected_type)
+                if selected_type_bare_tokens_len == 2:
+                    msg_class = get_message_class(selected_type_bare)
                     browsetext = get_message_text_from_class(msg_class)
+                else:
+                    browsetext = selected_type
 
             elif self._mode == message_helpers.SRV_MODE:
-                if is_primitive_type(selected_type):
-                    browsetext = selected_type
-                else:
-                    msg_class = get_service_class(selected_type)
+                if selected_type_bare_tokens_len == 3:
+                    msg_class = get_service_class(selected_type_bare)
                     browsetext = get_service_text_from_class(msg_class)
 
-            elif self._mode == message_helpers.ACTION_MODE:
-                if is_primitive_type(selected_type):
-                    browsetext = selected_type
+                elif selected_type_bare_tokens_len == 2:
+                    msg_class = get_message_class(selected_type_bare)
+                    browsetext = get_message_text_from_class(msg_class)
+
                 else:
-                    msg_class = get_action_class(selected_type)
+                    browsetext = selected_type
+
+
+            elif self._mode == message_helpers.ACTION_MODE:
+                if selected_type_bare_tokens_len == 3:
+                    msg_class = get_action_class(selected_type_bare)
                     browsetext = get_action_text_from_class(msg_class)
+
+                elif selected_type_bare_tokens_len == 2:
+                    msg_class = get_message_class(selected_type_bare)
+                    browsetext = get_message_text_from_class(msg_class)
+
+                else:
+                    browsetext = selected_type
 
             if browsetext is not None:
                 self._browsers.append(TextBrowseDialog(browsetext))
