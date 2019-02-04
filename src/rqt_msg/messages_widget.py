@@ -218,11 +218,14 @@ class MessagesWidget(QWidget):
             selected_type_bare = selected_type
             if selected_type_bare.find('[') >= 0:
                 selected_type_bare = selected_type_bare[:selected_type_bare.find('[')]
-
             # We use the number of '/' to determine of the selected type is a msg, action, srv,
             # or primitive type.
             # NOTE (mlautman - 2/4/19) this heuristic seems brittle and should be removed
             selected_type_bare_tokens_len = len(selected_type_bare.split('/'))
+
+            # We only want the base class so we transform eg. pkg1/my_srv/Request -> pkg1/my_srv
+            if selected_type_bare_tokens_len > 2:
+                selected_type_bare = "/".join(selected_type_bare.split('/')[:2])
 
             browsetext = None
 
