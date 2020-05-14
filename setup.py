@@ -28,7 +28,9 @@ setup(
         'Topic :: Software Development',
     ],
     description=(
-        'RQT plugin for monitoring ROS processes.'
+        'A Python GUI plugin for introspecting available ROS message types.' +
+        'Note that the msgs available through this plugin is the ones that are stored ' +
+        'on your machine, not on the ROS core your rqt instance connects to.'
     ),
     license='BSD',
     entry_points={
