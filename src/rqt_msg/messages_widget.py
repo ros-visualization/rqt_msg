@@ -85,6 +85,12 @@ class MessagesWidget(QWidget):
         self.setObjectName(ui_filename)
         self._mode = mode
 
+        icon_paths = QIcon.themeSearchPaths()
+        icon_paths.append(os.path.join(
+            package_path, 'share', pkg_name, 'resource', 'icons', 'rqt_icons'))
+        QIcon.setThemeSearchPaths(icon_paths)
+        QIcon.setThemeName('rqt_icons')
+
         self._add_button.setIcon(QIcon.fromTheme('list-add'))
         self._add_button.clicked.connect(self._add_message)
         self._refresh_packages(mode)
