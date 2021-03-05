@@ -110,18 +110,11 @@ class MessagesWidget(QWidget):
             return
         self._msgs = []
         if self._mode == message_helpers.MSG_MODE:
-            msg_list = [
-                ''.join([package, '/', msg])
-                for msg in get_message_interfaces(package)]
+            msg_list = [f'{package}/{name}' for name in get_message_interfaces([package])[package]]
         elif self._mode == message_helpers.SRV_MODE:
-            msg_list = [
-                ''.join([package, '/', srv])
-                for srv in get_service_interfaces(package)]
+            msg_list = [f'{package}/{name}' for name in get_service_interfaces([package])[package]]
         elif self._mode == message_helpers.ACTION_MODE:
-            msg_list = [
-                ''.join([package, '/', action])
-                for action in get_action_interfaces(package)]
-
+            msg_list = [f'{package}/{name}' for name in get_action_interfaces([package])[package]]
         self._logger.debug(
             '_refresh_msgs package={} msg_list={}'.format(package, msg_list))
         for msg in msg_list:
@@ -137,7 +130,7 @@ class MessagesWidget(QWidget):
             if msg_class is not None:
                 self._msgs.append(msg)
 
-        self._msgs = [x.split('/')[1] for x in self._msgs]
+        self._msgs = [x.split('/')[2] for x in self._msgs]
 
         self._msgs_combo.clear()
         self._msgs_combo.addItems(self._msgs)
