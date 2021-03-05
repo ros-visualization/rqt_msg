@@ -42,6 +42,8 @@ from python_qt_binding.QtWidgets import (QAction, QMenu,
 
 from rclpy import logging
 
+from rosidl_runtime_py.utilities import get_action, get_service, get_message
+
 from rqt_console.text_browse_dialog import TextBrowseDialog
 
 from rqt_msg.messages_tree_view import MessagesTreeView
@@ -50,7 +52,6 @@ from rqt_msg.messages_tree_view import MessagesTreeView
 
 from rqt_py_common import message_helpers
 from rqt_py_common.rqt_roscomm_util import RqtRoscommUtil
-from rqt_py_common.message_helpers import get_action_class, get_message_class, get_service_class
 from rqt_py_common.message_helpers import \
     get_action_text_from_class, get_message_text_from_class, get_service_text_from_class
 
@@ -124,11 +125,11 @@ class MessagesWidget(QWidget):
             '_refresh_msgs package={} msg_list={}'.format(package, msg_list))
         for msg in msg_list:
             if (self._mode == message_helpers.MSG_MODE):
-                msg_class = get_message_class(msg)
+                msg_class = get_message(msg)
             elif self._mode == message_helpers.SRV_MODE:
-                msg_class = get_service_class(msg)
+                msg_class = get_service(msg)
             elif self._mode == message_helpers.ACTION_MODE:
-                msg_class = get_action_class(msg)
+                msg_class = get_action(msg)
 
             self._logger.debug('_refresh_msgs msg_class={}'.format(msg_class))
 
@@ -149,12 +150,12 @@ class MessagesWidget(QWidget):
         self._logger.debug('_add_message msg={}'.format(msg))
 
         if self._mode == message_helpers.MSG_MODE:
-            msg_class = get_message_class(msg)()
+            msg_class = get_message(msg)()
             text_tree_root = 'Msg Root'
             self._messages_tree.model().add_message(msg_class,
                                                     self.tr(text_tree_root), msg, msg)
         elif self._mode == message_helpers.SRV_MODE:
-            msg_class = get_service_class(msg)
+            msg_class = get_service(msg)
             self._messages_tree.model().add_message(msg_class.Request(),
                                                     self.tr('Service Request'),
                                                     msg + '/Request',
@@ -164,7 +165,7 @@ class MessagesWidget(QWidget):
                                                     msg + '/Response',
                                                     msg + '/Response')
         elif self._mode == message_helpers.ACTION_MODE:
-            action_class = get_action_class(msg)
+            action_class = get_action(msg)
             text_tree_root = 'Action Root'
             self._messages_tree.model().add_message(action_class.Goal(),
                                                     self.tr('Action Goal'),
@@ -235,17 +236,17 @@ class MessagesWidget(QWidget):
 
             # if the type has a single '/' then we treat it as a msg type
             elif selected_type_bare_tokens_len == 2:
-                msg_class = get_message_class(selected_type_bare)
+                msg_class = get_message(selected_type_bare)
                 browsetext = get_message_text_from_class(msg_class)
 
             # If the type has two '/'s then we treat it as a srv or action type
             elif selected_type_bare_tokens_len == 3:
                 if self._mode == message_helpers.SRV_MODE:
-                        msg_class = get_service_class(selected_type_bare)
+                        msg_class = get_service(selected_type_bare)
                         browsetext = get_service_text_from_class(msg_class)
 
                 elif self._mode == message_helpers.ACTION_MODE:
-                    msg_class = get_action_class(selected_type_bare)
+                    msg_class = get_action(selected_type_bare)
                     browsetext = get_action_text_from_class(msg_class)
 
                 else:
