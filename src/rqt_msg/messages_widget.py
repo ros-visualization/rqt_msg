@@ -43,6 +43,7 @@ from python_qt_binding.QtWidgets import (QAction, QMenu,
 from rclpy import logging
 
 from rosidl_runtime_py.utilities import get_action, get_service, get_message
+from rosidl_runtime_py import get_action_interfaces, get_service_interfaces, get_message_interfaces
 
 from rqt_console.text_browse_dialog import TextBrowseDialog
 
@@ -111,15 +112,15 @@ class MessagesWidget(QWidget):
         if self._mode == message_helpers.MSG_MODE:
             msg_list = [
                 ''.join([package, '/', msg])
-                for msg in message_helpers.get_message_types(package)]
+                for msg in get_message_interfaces(package)]
         elif self._mode == message_helpers.SRV_MODE:
             msg_list = [
                 ''.join([package, '/', srv])
-                for srv in message_helpers.get_service_types(package)]
+                for srv in get_service_interfaces(package)]
         elif self._mode == message_helpers.ACTION_MODE:
             msg_list = [
                 ''.join([package, '/', action])
-                for action in message_helpers.get_action_types(package)]
+                for action in get_action_interfaces(package)]
 
         self._logger.debug(
             '_refresh_msgs package={} msg_list={}'.format(package, msg_list))
