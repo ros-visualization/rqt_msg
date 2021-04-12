@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Use rosidl_runtype_py instead of message_helpers where possible (`#11 <https://github.com/ros-visualization/rqt_msg/issues/11>`_)
+* Contributors: Ivan Santiago Paunovic
+
 1.0.1 (2018-12-12)
 ------------------
 * fix CMake (`#3 <https://github.com/ros-visualization/rqt_msg/issues/3>`_)
