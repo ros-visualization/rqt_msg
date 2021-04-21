@@ -2,8 +2,8 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.10 (2021-04-21)
+-------------------
 * Merge pull request `#12 <https://github.com/ros-visualization/rqt_msg/issues/12>`_ from ros-visualization/sloretz-update-maintainer
   Update maintainer in package.xml
 * fix shebang line for python3 (`#10 <https://github.com/ros-visualization/rqt_msg/issues/10>`_)
