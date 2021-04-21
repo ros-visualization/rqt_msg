@@ -2,6 +2,13 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#12 <https://github.com/ros-visualization/rqt_msg/issues/12>`_ from ros-visualization/sloretz-update-maintainer
+  Update maintainer in package.xml
+* fix shebang line for python3 (`#10 <https://github.com/ros-visualization/rqt_msg/issues/10>`_)
+* Contributors: Michael Carroll, Mikael Arguedas, Shane Loretz
+
 0.4.9 (2020-03-17)
 ------------------
 * bump CMake minimum version to avoid CMP0048 warning
