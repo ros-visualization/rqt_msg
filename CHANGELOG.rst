@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update maintainers to Audrow Nash (`#14 <https://github.com/ros-visualization/rqt_msg/issues/14>`_)
+* Contributors: Audrow Nash
+
 1.0.5 (2021-08-31)
 ------------------
 * Fix modern setuptools warning about dashes instead of underscores (`#13 <https://github.com/ros-visualization/rqt_msg/issues/13>`_)
