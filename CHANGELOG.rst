@@ -2,8 +2,8 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.6 (2022-04-06)
+------------------
 * Update maintainers to Audrow Nash (`#14 <https://github.com/ros-visualization/rqt_msg/issues/14>`_)
 * Contributors: Audrow Nash
 
