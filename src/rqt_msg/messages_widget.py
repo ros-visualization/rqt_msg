@@ -110,12 +110,18 @@ class MessagesWidget(QWidget):
         if package is None or len(package) == 0:
             return
         self._msgs = []
+        interfaces = {}
         if self._mode == message_helpers.MSG_MODE:
-            msg_list = [f'{package}/{name}' for name in get_message_interfaces([package])[package]]
+            interfaces = get_message_interfaces([package])
         elif self._mode == message_helpers.SRV_MODE:
-            msg_list = [f'{package}/{name}' for name in get_service_interfaces([package])[package]]
+            interfaces = get_service_interfaces([package])
         elif self._mode == message_helpers.ACTION_MODE:
-            msg_list = [f'{package}/{name}' for name in get_action_interfaces([package])[package]]
+            interfaces = get_action_interfaces([package])
+
+        msg_list = []
+        if package in interfaces:
+            msg_list = [f'{package}/{name}' for name in interfaces[package]]
+
         self._logger.debug(
             '_refresh_msgs package={} msg_list={}'.format(package, msg_list))
         for msg in msg_list:
