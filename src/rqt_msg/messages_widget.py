@@ -32,7 +32,7 @@
 
 import os
 
-from ament_index_python.resources import get_resource, get_resources
+from ament_index_python.resources import get_resource
 
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt
@@ -42,14 +42,12 @@ from python_qt_binding.QtWidgets import (QAction, QMenu,
 
 from rclpy import logging
 
-from rosidl_runtime_py.utilities import get_action, get_service, get_message
-from rosidl_runtime_py import get_action_interfaces, get_service_interfaces, get_message_interfaces
+from rosidl_runtime_py.utilities import get_action, get_message, get_service
+from rosidl_runtime_py import get_action_interfaces, get_message_interfaces, get_service_interfaces
 
 from rqt_console.text_browse_dialog import TextBrowseDialog
 
 from rqt_msg.messages_tree_view import MessagesTreeView
-
-# from rqt_py_common import rosaction
 
 from rqt_py_common import message_helpers
 from rqt_py_common.rqt_roscomm_util import RqtRoscommUtil
