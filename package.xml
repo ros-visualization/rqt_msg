@@ -6,7 +6,7 @@
   on your machine, not on the ROS core your rqt instance connects to.
   </description>
 
-  <maintainer email="audrow@openrobotics.org">Audrow Nash</maintainer>
+  <maintainer email="brandon@openrobotics.org">Brandon Ong</maintainer>
 
   <license>BSD</license>
 
@@ -15,6 +15,7 @@
   <url type="bugtracker">https://github.com/ros-visualization/rqt_msg/issues</url>
 
   <author>Aaron Blasdel</author>
+  <author email="audrow@openrobotics.org">Audrow Nash</author>
   <author email="dthomas@osrfoundation.org">Dirk Thomas</author>
   <author email="mikeblautman@gmail.com">Michael Lautman</author>
 
