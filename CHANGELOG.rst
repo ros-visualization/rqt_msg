@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Mirror rolling to foxy-devel
+* Contributors: Audrow Nash
+
 1.1.0 (2022-05-10)
 ------------------
 
