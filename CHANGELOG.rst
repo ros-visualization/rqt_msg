@@ -2,8 +2,8 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.5.0 (2023-06-07)
+------------------
 * Small cleanups to rqt_msg (`#16 <https://github.com/ros-visualization/rqt_msg/issues/16>`_)
 * Contributors: Chris Lalancette
 
