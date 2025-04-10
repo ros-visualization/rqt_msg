@@ -2,8 +2,8 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.11 (2025-04-10)
+-------------------
 * Import setup from setuptools instead of distutils.core (`#18 <https://github.com/ros-visualization/rqt_msg/issues/18>`_)
 * Contributors: Arne Hitzmann
 
