@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Import setup from setuptools instead of distutils.core (`#18 <https://github.com/ros-visualization/rqt_msg/issues/18>`_)
+* Contributors: Arne Hitzmann
+
 0.4.10 (2021-04-21)
 -------------------
 * Merge pull request `#12 <https://github.com/ros-visualization/rqt_msg/issues/12>`_ from ros-visualization/sloretz-update-maintainer
