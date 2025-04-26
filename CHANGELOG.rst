@@ -2,8 +2,8 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.12 (2025-04-26)
+-------------------
 * Bump cmake_minimum_required to avoid deprecation (`#22 <https://github.com/ros-visualization/rqt_msg/issues/22>`_)
 * Contributors: Arne Hitzmann
 
