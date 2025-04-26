@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Bump cmake_minimum_required to avoid deprecation (`#22 <https://github.com/ros-visualization/rqt_msg/issues/22>`_)
+* Contributors: Arne Hitzmann
+
 0.4.11 (2025-04-10)
 -------------------
 * Import setup from setuptools instead of distutils.core (`#18 <https://github.com/ros-visualization/rqt_msg/issues/18>`_)
