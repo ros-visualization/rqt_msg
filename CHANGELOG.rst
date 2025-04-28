@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.7.0 (2025-04-28)
+------------------
+* Remove CODEOWNERS (`#20 <https://github.com/ros-visualization/rqt_msg/issues/20>`_)
+* Contributors: Alejandro Hernández Cordero
+
 1.6.0 (2024-04-26)
 ------------------
 
