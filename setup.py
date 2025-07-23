@@ -23,7 +23,6 @@ setup(
     keywords=['ROS'],
     classifiers=[
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
@@ -31,7 +30,11 @@ setup(
         'A Python GUI plugin for introspecting available ROS message types.'
     ),
     license='BSD',
-    tests_require=['pytest'],
+    extras_require={
+        'test': [
+            'pytest',
+        ],
+    },
     entry_points={
         'console_scripts': [
             'rqt_msg = ' + package_name + '.main:main',
