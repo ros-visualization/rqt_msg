@@ -23,7 +23,6 @@ setup(
     keywords=['ROS'],
     classifiers=[
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
@@ -33,6 +32,14 @@ setup(
         'on your machine, not on the ROS core your rqt instance connects to.'
     ),
     license='BSD',
+<<<<<<< HEAD
+=======
+    extras_require={
+        'test': [
+            'pytest',
+        ],
+    },
+>>>>>>> b5c456e (fix setuptools deprecations (#23))
     entry_points={
         'console_scripts': [
             'rqt_msg = ' + package_name + '.main:main',
