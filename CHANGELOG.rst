@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix setuptools deprecations (`#23 <https://github.com/ros-visualization/rqt_msg/issues/23>`_)
+* Contributors: mosfet80
+
 1.7.0 (2025-04-28)
 ------------------
 * Remove CODEOWNERS (`#20 <https://github.com/ros-visualization/rqt_msg/issues/20>`_)
