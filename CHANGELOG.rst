@@ -2,8 +2,8 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.5.2 (2026-01-21)
+------------------
 * fix setuptools deprecations (backport `#23 <https://github.com/ros-visualization/rqt_msg/issues/23>`_) (`#25 <https://github.com/ros-visualization/rqt_msg/issues/25>`_)
   fix setuptools deprecations (`#23 <https://github.com/ros-visualization/rqt_msg/issues/23>`_)
   (cherry picked from commit b5c456ee25b953b6a7f80d91223e8829c569ce23)
