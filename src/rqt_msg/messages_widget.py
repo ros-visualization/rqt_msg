@@ -38,7 +38,7 @@ from packaging.version import Version
 from python_qt_binding import loadUi, QT_BINDING_VERSION
 from python_qt_binding.QtCore import Qt
 from python_qt_binding.QtGui import QIcon
-if Version(QT_BINDING_VERSION) > Version('6.0.0'):
+if Version(QT_BINDING_VERSION) >= Version('6.0.0'):
     from python_qt_binding.QtGui import QAction
 else:
     from python_qt_binding.QtWidgets import QAction
@@ -96,7 +96,7 @@ class MessagesWidget(QWidget):
         self._add_button.clicked.connect(self._add_message)
         self._refresh_packages(mode)
         self._refresh_msgs(self._package_combo.itemText(0))
-        if Version(QT_BINDING_VERSION) > Version('6.0.0'):
+        if Version(QT_BINDING_VERSION) >= Version('6.0.0'):
             self._package_combo.currentTextChanged.connect(self._refresh_msgs)
         else:
             self._package_combo.currentIndexChanged[str].connect(self._refresh_msgs)
@@ -215,7 +215,7 @@ class MessagesWidget(QWidget):
         remove_action = QAction(self.tr('Remove message'), menu)
         menu.addAction(remove_action)
 
-        if Version(QT_BINDING_VERSION) > Version('6.0.0'):
+        if Version(QT_BINDING_VERSION) >= Version('6.0.0'):
             action = menu.exec(event.globalPosition().toPoint())
         else:
             action = menu.exec(event.globalPos())
