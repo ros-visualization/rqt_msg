@@ -2,6 +2,12 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.6.1 (2026-04-13)
+------------------
+* fix setuptools deprecations (backport `#23 <https://github.com/ros-visualization/rqt_msg/issues/23>`_) (`#24 <https://github.com/ros-visualization/rqt_msg/issues/24>`_)
+* Remove CODEOWNERS (`#20 <https://github.com/ros-visualization/rqt_msg/issues/20>`_)
+* Contributors: Alejandro Hernández Cordero, mergify[bot]
+
 1.6.0 (2024-04-26)
 ------------------
 
