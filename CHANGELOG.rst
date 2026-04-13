@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.7.2 (2026-04-13)
+------------------
+* Support Qt6 (`#27 <https://github.com/ros-visualization/rqt_msg/issues/27>`_)
+* Contributors: Alejandro Hernández Cordero
+
 1.7.1 (2025-07-30)
 ------------------
 * fix setuptools deprecations (`#23 <https://github.com/ros-visualization/rqt_msg/issues/23>`_)
