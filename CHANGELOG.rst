@@ -2,6 +2,9 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.0 (2026-05-06)
+------------------
+
 1.7.2 (2026-04-13)
 ------------------
 * Support Qt6 (`#27 <https://github.com/ros-visualization/rqt_msg/issues/27>`_)
