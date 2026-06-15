@@ -38,12 +38,12 @@ from rqt_msg.messages_widget import MessagesWidget
 class Messages(Plugin):
 
     def __init__(self, context):
-        super(Messages, self).__init__(context)
+        super().__init__(context)
         self.setObjectName('Messages')
         self._widget = MessagesWidget()
         if context.serial_number() > 1:
             self._widget.setWindowTitle(
-                self._widget.windowTitle() + (' (%d)' % context.serial_number()))
+                self._widget.windowTitle() + (f' ({context.serial_number()})'))
         context.add_widget(self._widget)
 
     def shutdown_plugin(self):

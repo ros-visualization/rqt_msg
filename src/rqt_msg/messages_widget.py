@@ -80,7 +80,7 @@ class MessagesWidget(QWidget):
                             is to implement all Qt components in
                             rqt_msg/resource/message.ui file.
         """
-        super(MessagesWidget, self).__init__()
+        super().__init__()
 
         self._logger = logging.get_logger('MessagesWidget')
 
@@ -108,7 +108,7 @@ class MessagesWidget(QWidget):
         packages = sorted(
             [pkg_tuple[0] for pkg_tuple in RqtRoscommUtil.iterate_packages(self._mode)])
         self._package_list = packages
-        self._logger.debug('pkgs={}'.format(self._package_list))
+        self._logger.debug(f'pkgs={self._package_list}')
         self._package_combo.clear()
         self._package_combo.addItems(self._package_list)
         self._package_combo.setCurrentIndex(0)
@@ -130,7 +130,7 @@ class MessagesWidget(QWidget):
             msg_list = [f'{package}/{name}' for name in interfaces[package]]
 
         self._logger.debug(
-            '_refresh_msgs package={} msg_list={}'.format(package, msg_list))
+            f'_refresh_msgs package={package} msg_list={msg_list}')
         for msg in msg_list:
             if (self._mode == message_helpers.MSG_MODE):
                 msg_class = get_message(msg)
@@ -139,7 +139,7 @@ class MessagesWidget(QWidget):
             elif self._mode == message_helpers.ACTION_MODE:
                 msg_class = get_action(msg)
 
-            self._logger.debug('_refresh_msgs msg_class={}'.format(msg_class))
+            self._logger.debug(f'_refresh_msgs msg_class={msg_class}')
 
             if msg_class is not None:
                 self._msgs.append(msg)
@@ -155,7 +155,7 @@ class MessagesWidget(QWidget):
         msg = (self._package_combo.currentText() +
                '/' + self._msgs_combo.currentText())
 
-        self._logger.debug('_add_message msg={}'.format(msg))
+        self._logger.debug(f'_add_message msg={msg}')
 
         if self._mode == message_helpers.MSG_MODE:
             msg_class = get_message(msg)()
@@ -221,7 +221,7 @@ class MessagesWidget(QWidget):
             action = menu.exec(event.globalPos())
 
         if action == text_action:
-            self._logger.debug('_rightclick_menu selected={}'.format(selected))
+            self._logger.debug(f'_rightclick_menu selected={selected}')
             selected_type = selected[1].data()
 
             # We strip any array information for loading the python classes
@@ -259,10 +259,11 @@ class MessagesWidget(QWidget):
                     browsetext = get_action_text_from_class(msg_class)
 
                 else:
-                    self._logger.warn('Unrecognized value for self._mode: {} '
-                                      'for selected_type: {}'.format(self._mode, selected_type))
+                    self._logger.warning(
+                        f'Unrecognized value for self._mode: {self._mode} '
+                        f'for selected_type: {selected_type}')
             else:
-                self._logger.warn('Invalid selected_type: {}'.format(selected_type))
+                self._logger.warning(f'Invalid selected_type: {selected_type}')
 
             if browsetext is not None:
                 self._browsers.append(TextBrowseDialog(browsetext))
