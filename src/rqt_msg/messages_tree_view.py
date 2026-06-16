@@ -39,7 +39,7 @@ from rqt_py_common.message_tree_widget import MessageTreeWidget
 class MessagesTreeView(MessageTreeWidget):
 
     def __init__(self, parent=None):
-        super(MessagesTreeView, self).__init__()
+        super().__init__()
         self.setModel(MessagesTreeModel(self))
 
     def _recursive_set_editable(self, item, editable=True):
