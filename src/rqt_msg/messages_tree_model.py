@@ -31,6 +31,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
+from python_qt_binding.QtGui import QStandardItem
+
+from rqt_py_common.message_helpers import get_message_constants_from_class
 from rqt_py_common.message_tree_model import MessageTreeModel
 
 
@@ -41,3 +44,19 @@ class MessagesTreeModel(MessageTreeModel):
         self.setHorizontalHeaderLabels([self.tr('Tree'),
                                         self.tr('Type'),
                                         self.tr('Path')])
+
+    def add_message(self, message_instance, message_name='', message_type='', message_path=''):
+        super().add_message(message_instance, message_name, message_type, message_path)
+
+        # Constants are not part of the message fields, so they are not added by
+        # the base class. Insert them as child rows of the message root node that
+        # add_message just appended, ahead of the fields (as in the .msg file).
+        root_item = self.item(self.rowCount() - 1)
+        if root_item is None:
+            return
+        constants = get_message_constants_from_class(message_instance)
+        for index, (constant_type, constant_name, constant_value) in enumerate(constants):
+            root_item.insertRow(index, [
+                QStandardItem(f'{constant_name}={constant_value}'),
+                QStandardItem(constant_type),
+                QStandardItem(f'{message_path}/{constant_name}')])
