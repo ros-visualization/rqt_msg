@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.5.3 (2026-07-16)
+------------------
+* Visualize constants (backport `#30 <https://github.com/ros-visualization/rqt_msg/issues/30>`_) (`#33 <https://github.com/ros-visualization/rqt_msg/issues/33>`_)
+* Contributors: mergify[bot]
+
 1.5.2 (2026-01-21)
 ------------------
 * fix setuptools deprecations (backport `#23 <https://github.com/ros-visualization/rqt_msg/issues/23>`_) (`#25 <https://github.com/ros-visualization/rqt_msg/issues/25>`_)
