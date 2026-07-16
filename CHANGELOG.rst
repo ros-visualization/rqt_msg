@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.2 (2026-07-16)
+------------------
+* Visualize constants (`#30 <https://github.com/ros-visualization/rqt_msg/issues/30>`_)
+* Contributors: Alejandro Hernández Cordero
+
 2.0.1 (2026-06-16)
 ------------------
 * Use logger.warning(), f-string and super() (`#28 <https://github.com/ros-visualization/rqt_msg/issues/28>`_)
