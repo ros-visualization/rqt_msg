@@ -4,7 +4,7 @@ package_name = 'rqt_msg'
 
 setup(
     name=package_name,
-    version='2.0.3',
+    version='2.0.4',
     packages=[package_name],
     package_dir={'': 'src'},
     data_files=[
