@@ -2,6 +2,11 @@
 Changelog for package rqt_msg
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.4 (2026-09-04)
+------------------
+* Added missing depencencies to package.xml (`#36 <https://github.com/ros-visualization/rqt_msg/issues/36>`_)
+* Contributors: Alejandro Hernández Cordero
+
 2.0.3 (2026-09-04)
 ------------------
 * Removed Qt5 support (`#35 <https://github.com/ros-visualization/rqt_msg/issues/35>`_)
